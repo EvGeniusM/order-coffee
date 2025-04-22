@@ -15,15 +15,15 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteBtn.style.fontSize = '20px';
         deleteBtn.style.cursor = 'pointer';
         deleteBtn.style.color = '#999';
-        
+
         deleteBtn.addEventListener('mouseover', () => {
             deleteBtn.style.color = '#f00';
         });
-        
+
         deleteBtn.addEventListener('mouseout', () => {
             deleteBtn.style.color = '#999';
         });
-        
+
         beverage.style.position = 'relative';
         beverage.prepend(deleteBtn);
         return deleteBtn;
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateDeleteButtons() {
         const beverages = document.querySelectorAll('.beverage');
-        beverages.forEach((beverage, index) => {
+        beverages.forEach((beverage) => {
             let deleteBtn = beverage.querySelector('.delete-btn') || createDeleteButton(beverage);
             deleteBtn.disabled = beverages.length <= 1;
         });
@@ -64,6 +64,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateDeleteButtons();
             }
         }
+    });
+
+    document.querySelector('.submit-button').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '&times;';
+
+        const modalText = document.createElement('p');
+        modalText.textContent = 'Заказ принят!';
+
+        modal.appendChild(closeBtn);
+        modal.appendChild(modalText);
+
+        overlay.appendChild(modal);
+
+        document.body.appendChild(overlay);
+
+        closeBtn.addEventListener('click', () => {
+            document.body.removeChild(overlay);
+        });
     });
 
     updateDeleteButtons();
