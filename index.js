@@ -1,4 +1,3 @@
-// index.js (исправленный)
 const addButton = document.querySelector('.add-button');
 const submitButton = document.querySelector('.submit-button');
 const form = document.querySelector('form');
@@ -46,19 +45,17 @@ function createBeverageElement() {
     const newBeverage = template.cloneNode(true);
     beverageCount++;
 
-    // Сброс значений клона:
-    // Сброс select
+
     const select = newBeverage.querySelector('select');
     select.selectedIndex = 0;
-    // Сброс радио к дефолтному (usual)
     newBeverage.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.name = `milk-${beverageCount}`;
         radio.checked = radio.value === 'usual';
     });
-    // Сброс всех чекбоксов
+
     newBeverage.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
-    // Кнопка удаления
+
     const closeButton = document.createElement('button');
     closeButton.type = 'button';
     closeButton.textContent = '✖';
@@ -71,7 +68,6 @@ function createBeverageElement() {
     });
     newBeverage.prepend(closeButton);
 
-    // Поле заметок
     attachNoteField(newBeverage);
 
     form.insertBefore(newBeverage, addButton.parentElement);
@@ -97,7 +93,7 @@ function declOfNum(n, text_forms) {
     const n1 = n % 10;
     if (n > 10 && n < 20) return text_forms[2];
     if (n1 > 1 && n1 < 5) return text_forms[1];
-    if (n1 == 1) return text_forms[0];
+    if (n1 === 1) return text_forms[0];
     return text_forms[2];
 }
 
