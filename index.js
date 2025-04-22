@@ -68,27 +68,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelector('.submit-button').addEventListener('click', function(e) {
         e.preventDefault();
-
+    
+        function getDrinkWord(count) {
+            const lastDigit = count % 10;
+            const lastTwoDigits = count % 100;
+            
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+                return 'напитков';
+            }
+            if (lastDigit === 1) {
+                return 'напиток';
+            }
+            if (lastDigit >= 2 && lastDigit <= 4) {
+                return 'напитка';
+            }
+            return 'напитков';
+        }
+    
+        const drinkCount = document.querySelectorAll('.beverage').length;
+        const drinkWord = getDrinkWord(drinkCount);
+    
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
-
+    
         const modal = document.createElement('div');
         modal.className = 'modal';
-
+    
         const closeBtn = document.createElement('button');
         closeBtn.className = 'close-btn';
         closeBtn.innerHTML = '&times;';
-
+    
         const modalText = document.createElement('p');
-        modalText.textContent = 'Заказ принят!';
-
+        modalText.textContent = `Вы заказали ${drinkCount} ${drinkWord}`;
+    
         modal.appendChild(closeBtn);
         modal.appendChild(modalText);
-
         overlay.appendChild(modal);
-
         document.body.appendChild(overlay);
-
+    
         closeBtn.addEventListener('click', () => {
             document.body.removeChild(overlay);
         });
