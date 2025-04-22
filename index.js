@@ -37,6 +37,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function updateRadioNames() {
+        document.querySelectorAll('.beverage').forEach((beverage, index) => {
+            const milkRadios = beverage.querySelectorAll('input[type="radio"]');
+            milkRadios.forEach(radio => {
+                radio.name = 'milk-' + index;
+            });
+        });
+    }
+
     addButton.addEventListener('click', function() {
         const lastBeverage = document.querySelector('.beverage:last-of-type');
         const newBeverage = lastBeverage.cloneNode(true);
@@ -54,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         addButton.parentElement.before(newBeverage);
         updateDeleteButtons();
+        updateRadioNames();
     });
 
     form.addEventListener('click', function(e) {
@@ -62,17 +72,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (beverage && document.querySelectorAll('.beverage').length > 1) {
                 beverage.remove();
                 updateDeleteButtons();
+                updateRadioNames();
             }
         }
     });
 
     document.querySelector('.submit-button').addEventListener('click', function(e) {
         e.preventDefault();
-    
+
         function getDrinkWord(count) {
             const lastDigit = count % 10;
             const lastTwoDigits = count % 100;
-            
+
             if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
                 return 'напитков';
             }
@@ -84,32 +95,85 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return 'напитков';
         }
-    
-        const drinkCount = document.querySelectorAll('.beverage').length;
+
+        const beverages = document.querySelectorAll('.beverage');
+        const drinkCount = beverages.length;
         const drinkWord = getDrinkWord(drinkCount);
-    
+
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
-    
+
         const modal = document.createElement('div');
         modal.className = 'modal';
-    
+
         const closeBtn = document.createElement('button');
         closeBtn.className = 'close-btn';
         closeBtn.innerHTML = '&times;';
-    
+
         const modalText = document.createElement('p');
         modalText.textContent = `Вы заказали ${drinkCount} ${drinkWord}`;
-    
+
+        const table = document.createElement('table');
+        table.className = 'order-table';
+
+        const headerRow = document.createElement('tr');
+        ['Напиток', 'Молоко', 'Дополнительно'].forEach(text => {
+            const th = document.createElement('th');
+            th.textContent = text;
+            headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+
+        beverages.forEach(beverage => {
+            const row = document.createElement('tr');
+
+            const select = beverage.querySelector('select');
+            const drinkName = select.options[select.selectedIndex].textContent;
+            const drinkCell = document.createElement('td');
+            drinkCell.textContent = drinkName;
+            row.appendChild(drinkCell);
+
+            const checkedMilk = beverage.querySelector('input[type="radio"]:checked');
+            let milkText = '';
+            if (checkedMilk) {
+                const milkLabel = checkedMilk.closest('label');
+                if (milkLabel) {
+                    milkText = milkLabel.textContent.trim();
+                    if(milkText.includes('обычном')) {
+                        milkText = 'обычное';
+                    }
+                }
+            }
+            const milkCell = document.createElement('td');
+            milkCell.textContent = milkText;
+            row.appendChild(milkCell);
+
+            const checkedOptions = beverage.querySelectorAll('input[type="checkbox"]:checked');
+            const extraArr = [];
+            checkedOptions.forEach(cb => {
+                const cbLabel = cb.closest('label');
+                if (cbLabel) {
+                    extraArr.push(cbLabel.textContent.trim());
+                }
+            });
+            const extraCell = document.createElement('td');
+            extraCell.textContent = extraArr.join(', ');
+            row.appendChild(extraCell);
+
+            table.appendChild(row);
+        });
+
         modal.appendChild(closeBtn);
         modal.appendChild(modalText);
+        modal.appendChild(table);
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
-    
+
         closeBtn.addEventListener('click', () => {
             document.body.removeChild(overlay);
         });
     });
 
     updateDeleteButtons();
+    updateRadioNames();
 });
